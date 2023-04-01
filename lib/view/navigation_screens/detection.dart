@@ -75,7 +75,7 @@ class _detectionScreenState extends State<detectionScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-            Text("Uplode your photo",
+            Text("Upload your photo",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.sp)),
             SizedBox(
               height: 3.h,
@@ -86,6 +86,8 @@ class _detectionScreenState extends State<detectionScreen> {
                 decoration: BoxDecoration(
                   color: clr.backGround,
                   borderRadius: BorderRadius.circular(30),
+
+
                 ),
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
