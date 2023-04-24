@@ -1,7 +1,5 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:monkeybox_final/utilities/app_colors.dart';
@@ -71,58 +69,63 @@ class _detectionScreenState extends State<detectionScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-            Text("Upload your photo",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.sp)),
-            SizedBox(
-              height: 3.h,
-            ),
-            Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.all(30),
-                decoration: BoxDecoration(
-                  color: clr.backGround,
-                  borderRadius: BorderRadius.circular(30),
+          child: SingleChildScrollView(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+              Text("Upload your photo",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.sp)),
+              SizedBox(
+                height: 3.h,
+              ),
+              Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(30),
+                  decoration: BoxDecoration(
+                    color: clr.backGround,
+                    borderRadius: BorderRadius.circular(30),
 
 
-                ),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        child: Center(
-                          child: _loading == true
-                              ? const SizedBox() //show nothing if no picture selected
-                              : Column(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(30),
-                                      child: Image.file(
-                                        _image!,
-                                        fit: BoxFit.fill,
-                                      ),
+                  ),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5.h),
+                          child: Container(
+                            child: Center(
+                              child: _loading == true
+                                  ? const SizedBox() //show nothing if no picture selected
+                                  : Column(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(30),
+                                          child: Image.file(
+                                            _image!,
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                        _output != null
+                                            ? Padding(
+                                                padding: EdgeInsets.symmetric(vertical: 5.h),
+                                                child: Text(
+                                                  'The object is: ${_output![0]['label']}!',
+                                                  style: TextStyle(
+                                                      color: clr.primaryColor,
+                                                      fontSize: 22,
+                                                      fontWeight: FontWeight.bold),
+                                                ),
+                                              )
+                                            : Container(),
+                                      ],
                                     ),
-                                    _output != null
-                                        ? Padding(
-                                            padding: EdgeInsets.all(8.0.sp),
-                                            child: Text(
-                                              'The object is: ${_output![0]['label']}!',
-                                              style: TextStyle(
-                                                  color: clr.primaryColor,
-                                                  fontSize: 22,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          )
-                                        : Container(),
-                                  ],
-                                ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ])),
-          ])),
+                      ])),
+            ]),
+          )),
       floatingActionButton: SpeedDial(
         icon: Icons.add,
         activeIcon: Icons.close,
