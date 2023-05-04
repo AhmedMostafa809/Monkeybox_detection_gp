@@ -67,7 +67,7 @@ class _detectionScreenState extends State<detectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+
       body: Center(
           child: SingleChildScrollView(
             child: Column(
