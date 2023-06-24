@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:monkeybox_final/Cubit/add_image-cubit/add_image_cubit.dart';
 import 'package:monkeybox_final/Cubit/auth_cubit/login_cubit/login_cubit.dart';
 import 'package:monkeybox_final/Cubit/auth_cubit/register_cubit/register_cubit.dart';
 import 'package:monkeybox_final/Cubit/get_user_cubit/get_user_cubit.dart';
-
 import 'package:monkeybox_final/Cubit/logout_cubit/logout_cubit.dart';
 import 'package:monkeybox_final/Cubit/theme_cubit/theme_cubit.dart';
 import 'package:monkeybox_final/view/auth/Login&SignUp.dart';
-import 'package:monkeybox_final/view/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
-import 'package:flutter/material.dart';
 import 'Bloc_opserver.dart';
 import 'Cubit/theme_cubit/theme_state.dart';
 import 'controller/dio/dio_helper.dart';
@@ -28,7 +24,6 @@ void main() async {
       BlocProvider(create: (_) => LoginCubit()),
       BlocProvider(create: (_) => GetUserCubit()),
       BlocProvider(create: (_) => LogoutCubit()),
-      BlocProvider(create: (_) => AddImageCubit()),
     ],
     child: MyApp(),
   ));
