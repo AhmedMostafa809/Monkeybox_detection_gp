@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:monkeybox_final/Cubit/theme_state.dart';
+import 'package:monkeybox_final/Cubit/theme_cubit/theme_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart' as Material; // import with prefix
 

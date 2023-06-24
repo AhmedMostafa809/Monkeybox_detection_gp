@@ -2,20 +2,146 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_switch/flutter_switch.dart';
-import 'package:monkeybox_final/Cubit/theme_cubit.dart';
+import 'package:monkeybox_final/Cubit/auth_cubit/login_cubit/login_cubit.dart';
+import 'package:monkeybox_final/Cubit/auth_cubit/register_cubit/register_cubit.dart';
+import 'package:monkeybox_final/Cubit/get_user_cubit/get_user_cubit.dart';
+
+import 'package:monkeybox_final/Cubit/theme_cubit/theme_cubit.dart';
+import 'package:monkeybox_final/controller/dio/endpoints.dart';
 import 'package:monkeybox_final/utilities/app_colors.dart';
 import 'package:monkeybox_final/utilities/app_assets.dart';
+import 'package:monkeybox_final/view/auth/Login&SignUp.dart';
 import 'package:sizer/sizer.dart';
-import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../Cubit/logout_cubit/logout_cubit.dart';
 
 class homeScreen extends StatelessWidget {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  RegisterCubit registerCubit = RegisterCubit();
+
   @override
   Widget build(BuildContext context) {
+    final logoutCubit = BlocProvider.of<LogoutCubit>(context);
+
     return Scaffold(
+      key: scaffoldKey,
+      drawer: Drawer(
+          child: ListView(
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: clr.lightBlue,
+            ),
+            child: BlocConsumer<GetUserCubit, GetUserState>(
+              listener: (context, state) {},
+              builder: (context, state) {
+                return Text(
+                  EndPoint.name,
+                  style:
+                      TextStyle(fontSize: 25.sp, fontWeight: FontWeight.bold),
+                );
+              },
+            ),
+          ),
+          ListTile(
+            title: context.watch<ThemeCubit>().state.isDark == true
+                ? Text(
+                    "Light Mode",
+                    style:
+                        TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold),
+                  )
+                : Text("Dark Mode",
+                    style: TextStyle(
+                        fontSize: 15.sp, fontWeight: FontWeight.bold)),
+            leading: SizedBox(
+              width: 15.w,
+              child: FlutterSwitch(
+                value: context.watch<ThemeCubit>().state.isDark,
+                onToggle: (value) {
+                  context.read<ThemeCubit>().toggleTheme();
+                },
+                activeIcon: Icon(
+                  Icons.lightbulb,
+                  color: Colors.black,
+                ),
+                inactiveIcon: Icon(
+                  Icons.lightbulb_outline,
+                  color: Colors.black,
+                ),
+                activeColor: clr.primaryColor,
+                inactiveColor: Colors.grey,
+                height: 3.5.h,
+                width: 13.w,
+                // toggleSize: 40.0,
+                // borderRadius: 500,
+                padding: 2,
+              ),
+            ),
+          ),
+          Divider(
+            thickness: 1,
+            indent: 10,
+            endIndent: 10,
+          ),
+          ListTile(
+            onTap: () {
+              print(EndPoint.name);
+            },
+            title: Text(
+              'Patient history',
+              style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold),
+            ),
+            leading: SizedBox(width: 15.w, child: Icon(Icons.history)),
+          ),
+          BlocConsumer<LogoutCubit, LogoutState>(
+            listener: (context, state) {
+
+            },
+            builder: (context, state) {
+              return ListTile(
+                onTap: () {
+                  logoutCubit.logOut(EndPoint.userToken);
+                  if(state is LogoutSuccessState){
+                    print("Toooooken: "+EndPoint.userToken);
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AuthPage(),));
+                  }
+                },
+                title: Text(
+                  'LogOut',
+                  style:
+                      TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold),
+                ),
+                leading: SizedBox(width: 15.w, child: Icon(Icons.logout)),
+              );
+            },
+          ),
+        ],
+      )),
+      appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () {
+            scaffoldKey.currentState!.openDrawer();
+          },
+          child: Icon(
+            Icons.menu,
+            color: context.watch<ThemeCubit>().state.isDark == true
+                ? Colors.white
+                : clr.primaryColor,
+          ),
+        ),
+        title: Text(
+          'Monkeypox Disease',
+          style: TextStyle(
+              fontSize: 22.sp,
+              fontWeight: FontWeight.bold,
+              color: clr.primaryColor),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+
       // backgroundColor: Colors.white,
       body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 7.0.w, vertical: 2.h),
@@ -23,44 +149,9 @@ class homeScreen extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Monkeypox Disease',
-                      style: TextStyle(
-                          fontSize: 22.sp,
-                          fontWeight: FontWeight.bold,
-                          color: clr.primaryColor),
-                    ),
-                    FlutterSwitch(
-                      value: context.watch<ThemeCubit>().state.isDark,
-                      onToggle: (value) {
-                        context.read<ThemeCubit>().toggleTheme();
-                      },
-                      activeIcon: Icon(
-                        Icons.lightbulb,
-                        color: Colors.black,
-                      ),
-                      inactiveIcon: Icon(
-                        Icons.lightbulb_outline,
-                        color: Colors.black,
-                      ),
-                      activeColor: clr.primaryColor,
-                      inactiveColor: Colors.grey,
-                      height: 4.h,
-                      width: 15.w,
-                      // toggleSize: 40.0,
-                      // borderRadius: 500,
-                      padding: 3.0,
-                    ),
-                    // Switch(
-                    //   activeColor: clr.primaryColor,
-                    //   value: context.watch<ThemeCubit>().state.isDark,
-                    //   onChanged: (value) {
-                    //     context.read<ThemeCubit>().toggleTheme();
-                    //   },
-                    // ),
-                  ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [],
                 ),
                 SizedBox(
                   height: 1.h,

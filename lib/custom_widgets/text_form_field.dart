@@ -113,7 +113,6 @@ class DefaultFormField extends StatelessWidget {
 
 
       decoration: InputDecoration(
-
         helperStyle: TextStyle(backgroundColor: Colors.transparent),
         filled: true,
         fillColor: Colors.white,

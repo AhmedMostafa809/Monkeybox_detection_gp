@@ -1,15 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:monkeybox_final/Cubit/auth_cubit/login_cubit/login_cubit.dart';
+import 'package:monkeybox_final/Cubit/auth_cubit/login_cubit/login_cubit.dart';
+import 'package:monkeybox_final/controller/dio/endpoints.dart';
 import 'package:monkeybox_final/custom_widgets/button.dart';
 import 'package:monkeybox_final/custom_widgets/text_form_field.dart';
+import 'package:monkeybox_final/view/home_page.dart';
 import 'package:sizer/sizer.dart';
 import 'package:monkeybox_final/utilities/app_colors.dart';
 
-TextEditingController LoginNameController = TextEditingController();
-TextEditingController LoginEmailController = TextEditingController();
-TextEditingController LoginPasswordController = TextEditingController();
-TextEditingController RegisterEmailController = TextEditingController();
-TextEditingController RegisterPasswordController = TextEditingController();
+import '../../Cubit/auth_cubit/register_cubit/register_cubit.dart';
+import '../../Cubit/get_user_cubit/get_user_cubit.dart';
+
+TextEditingController registerNameController = TextEditingController();
+TextEditingController registerEmailController = TextEditingController();
+TextEditingController registerPasswordController = TextEditingController();
+TextEditingController registerPasswordConfirmController = TextEditingController();
+TextEditingController loginEmailController = TextEditingController();
+TextEditingController loginPasswordController = TextEditingController();
 
 class AuthPage extends StatefulWidget {
   @override
@@ -66,8 +76,6 @@ class AuthPageState extends State<AuthPage>
               onTap: isLogin
                   ? null
                   : () {
-                      print("Hi");
-                      print(isLogin);
                       loginController.reverse();
 
                       setState(() {
@@ -76,7 +84,7 @@ class AuthPageState extends State<AuthPage>
                     },
               child: Container(
                 child: Padding(
-                  padding:  EdgeInsets.symmetric(vertical: 5.h),
+                  padding: EdgeInsets.symmetric(vertical: 5.h),
                   child: Text(
                     'SignUp',
                     style: const TextStyle(
@@ -93,7 +101,11 @@ class AuthPageState extends State<AuthPage>
     );
   }
 
+  ///*************************************SignUp**********************************************///
   Widget buildRegisterComponents() {
+    final getUserCubit = BlocProvider.of<GetUserCubit>(context);
+
+    final registerCubit = BlocProvider.of<RegisterCubit>(context);
     return Visibility(
       visible: isLogin,
       child: Padding(
@@ -113,7 +125,7 @@ class AuthPageState extends State<AuthPage>
                 height: 5.h,
               ),
               DefaultFormField(
-                controller: LoginNameController,
+                controller: registerNameController,
                 keyboardType: TextInputType.name,
                 textInputAction: TextInputAction.next,
                 obSecured: false,
@@ -129,7 +141,7 @@ class AuthPageState extends State<AuthPage>
                 height: 3.h,
               ),
               DefaultFormField(
-                controller: LoginEmailController,
+                controller: registerEmailController,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 obSecured: false,
@@ -145,8 +157,8 @@ class AuthPageState extends State<AuthPage>
                 height: 3.h,
               ),
               DefaultFormField(
-                controller: LoginPasswordController,
-                keyboardType: TextInputType.emailAddress,
+                controller: registerPasswordController,
+                keyboardType: TextInputType.visiblePassword,
                 obSecured: true,
                 hintText: "Password",
                 prefixIcon: Icon(
@@ -159,12 +171,52 @@ class AuthPageState extends State<AuthPage>
               SizedBox(
                 height: 3.h,
               ),
-              DefaultButton(
-                  Onpressed: () {},
-                  text: 'Sign Up',
-                  clr: Colors.transparent,
-                  Height: 7.h,
-                  width: double.infinity)
+              DefaultFormField(
+                controller: registerPasswordConfirmController,
+                keyboardType: TextInputType.visiblePassword,
+                obSecured: true,
+                hintText: "Password",
+                prefixIcon: Icon(
+                  Icons.lock,
+                  color: clr.primaryColor,
+                  size: 20.sp,
+                ),
+                cursorColor: clr.primaryColor,
+              ),
+              SizedBox(
+                height: 3.h,
+              ),
+              BlocConsumer<RegisterCubit, RegisterState>(
+                listener: (context, state) {
+                  if (state is RegisterSuccessState) {
+                    getUserCubit.getUserName(EndPoint.userToken);
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(),
+                        ));
+                  }
+                },
+                builder: (context, state) {
+                  return state is RegisterLoadingState
+                      ? Center(
+                          child: CircularProgressIndicator(
+                          color: clr.primaryColor,
+                        ))
+                      : DefaultButton(
+                          Onpressed: () {
+                            registerCubit.register(
+                                registerNameController.text,
+                                registerEmailController.text,
+                                registerPasswordController.text,
+                                registerPasswordConfirmController.text);
+                          },
+                          text: 'Sign Up',
+                          clr: Colors.transparent,
+                          Height: 7.h,
+                          width: double.infinity);
+                },
+              )
             ],
           ),
         ),
@@ -172,9 +224,13 @@ class AuthPageState extends State<AuthPage>
     );
   }
 
-  Widget buildLoginComponents() {
-    return Container(
+  ///*************************************Login**********************************************///
 
+  Widget buildLoginComponents() {
+    final loginCubit = BlocProvider.of<LoginCubit>(context);
+    final getUserCubit = BlocProvider.of<GetUserCubit>(context);
+
+    return Container(
       child: Padding(
         padding: EdgeInsets.only(left: 7.w, right: 7.w),
         child: Column(
@@ -192,7 +248,7 @@ class AuthPageState extends State<AuthPage>
               height: 3.h,
             ),
             DefaultFormField(
-              controller: RegisterEmailController,
+              controller: loginEmailController,
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               obSecured: false,
@@ -208,7 +264,7 @@ class AuthPageState extends State<AuthPage>
               height: 3.h,
             ),
             DefaultFormField(
-              controller: RegisterPasswordController,
+              controller: loginPasswordController,
               keyboardType: TextInputType.visiblePassword,
               obSecured: true,
               hintText: "Password",
@@ -222,12 +278,35 @@ class AuthPageState extends State<AuthPage>
             SizedBox(
               height: 3.h,
             ),
-            DefaultButton(
-                Onpressed: () {},
-                text: 'Log In',
-                clr: clr.lightBlue,
-                Height: 7.h,
-                width: double.infinity)
+            BlocConsumer<LoginCubit, LoginState>(
+              listener: (context, state) {
+                if (state is LoginSuccessState) {
+
+                  getUserCubit.getUserName(EndPoint.userToken);
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(),
+                      ));
+                }
+              },
+              builder: (context, state) {
+                return state is LoginLoadingState
+                    ? Center(
+                        child: CircularProgressIndicator(
+                        color: clr.primaryColor,
+                      ))
+                    : DefaultButton(
+                        Onpressed: () {
+                          loginCubit.login(loginEmailController.text,
+                              loginPasswordController.text);
+                        },
+                        text: 'Log In',
+                        clr: clr.lightBlue,
+                        Height: 7.h,
+                        width: double.infinity);
+              },
+            )
           ],
         ),
       ),

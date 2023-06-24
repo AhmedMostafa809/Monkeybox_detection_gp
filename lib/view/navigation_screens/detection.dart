@@ -1,10 +1,16 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:monkeybox_final/utilities/app_colors.dart';
 import 'package:tflite/tflite.dart';
 import 'package:sizer/sizer.dart';
+
+import '../../controller/dio/dio_helper.dart';
+import '../../controller/dio/endpoints.dart';
+import '../../model/addImage_model.dart';
 
 class detectionScreen extends StatefulWidget {
   @override
@@ -15,6 +21,7 @@ bool _loading = true;
 File? _image;
 List? _output;
 final picker = ImagePicker();
+AddImageModel addImageModel = AddImageModel();
 
 class _detectionScreenState extends State<detectionScreen> {
   @override
@@ -31,6 +38,41 @@ class _detectionScreenState extends State<detectionScreen> {
     Tflite.close();
   }
 
+  addImage(File img, String status) async {
+    FormData upload = FormData.fromMap({
+      'image': await MultipartFile.fromFile(_image!.path),
+      'status': status,
+    });
+    DioHelper.postImage(
+        endPoint: EndPoint.addImage,
+        data: upload,
+        token: EndPoint.userToken)
+        .then((value) {
+      addImageModel = AddImageModel.fromJson(value.data);
+      print("Image added :" + addImageModel.imagePath.toString());
+      Fluttertoast.showToast(
+          msg: "Image uploaded successfully",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: clr.primaryColor,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }).catchError((e) {
+      print(e.toString());
+      Fluttertoast.showToast(
+          msg: "Ann error occurred while uploading the image",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: clr.primaryColor,
+          textColor: Colors.white,
+          fontSize: 16.0);
+
+    });
+  }
+
+
   classifyImage(File image) async {
     var output = await Tflite.runModelOnImage(
       path: image.path,
@@ -39,6 +81,8 @@ class _detectionScreenState extends State<detectionScreen> {
       _output = output;
       _loading = false;
     });
+    print(":::::::::::::::" + _output.toString());
+    addImage(_image!, '${_output![0]['label']}');
   }
 
   loadModel() async {
@@ -67,15 +111,15 @@ class _detectionScreenState extends State<detectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Center(
           child: SingleChildScrollView(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
               Text("Upload your photo",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.sp)),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, fontSize: 25.sp)),
               SizedBox(
                 height: 3.h,
               ),
@@ -85,14 +129,12 @@ class _detectionScreenState extends State<detectionScreen> {
                   decoration: BoxDecoration(
                     color: clr.backGround,
                     borderRadius: BorderRadius.circular(30),
-
-
                   ),
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 5.h),
+                          padding: EdgeInsets.symmetric(vertical: 1.h),
                           child: Container(
                             child: Center(
                               child: _loading == true
@@ -100,7 +142,8 @@ class _detectionScreenState extends State<detectionScreen> {
                                   : Column(
                                       children: [
                                         ClipRRect(
-                                          borderRadius: BorderRadius.circular(30),
+                                          borderRadius:
+                                              BorderRadius.circular(30),
                                           child: Image.file(
                                             _image!,
                                             fit: BoxFit.fill,
@@ -108,13 +151,15 @@ class _detectionScreenState extends State<detectionScreen> {
                                         ),
                                         _output != null
                                             ? Padding(
-                                                padding: EdgeInsets.symmetric(vertical: 5.h),
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 5.h),
                                                 child: Text(
                                                   'The object is: ${_output![0]['label']}!',
                                                   style: TextStyle(
                                                       color: clr.primaryColor,
                                                       fontSize: 22,
-                                                      fontWeight: FontWeight.bold),
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 ),
                                               )
                                             : Container(),
@@ -125,7 +170,7 @@ class _detectionScreenState extends State<detectionScreen> {
                         ),
                       ])),
             ]),
-          )),
+      )),
       floatingActionButton: SpeedDial(
         icon: Icons.add,
         activeIcon: Icons.close,

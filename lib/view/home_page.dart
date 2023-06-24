@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:monkeybox_final/utilities/app_colors.dart';
-import '../Cubit/theme_cubit.dart';
+import '../Cubit/theme_cubit/theme_cubit.dart';
 import 'navigation_screens/about_us.dart';
 import 'navigation_screens/detection.dart';
 import 'navigation_screens/home.dart';
