@@ -17,7 +17,8 @@ import '../../Cubit/get_user_cubit/get_user_cubit.dart';
 TextEditingController registerNameController = TextEditingController();
 TextEditingController registerEmailController = TextEditingController();
 TextEditingController registerPasswordController = TextEditingController();
-TextEditingController registerPasswordConfirmController = TextEditingController();
+TextEditingController registerPasswordConfirmController =
+    TextEditingController();
 TextEditingController loginEmailController = TextEditingController();
 TextEditingController loginPasswordController = TextEditingController();
 
@@ -135,6 +136,7 @@ class AuthPageState extends State<AuthPage>
                   color: clr.primaryColor,
                   size: 20.sp,
                 ),
+                textColor: Colors.black,
                 cursorColor: clr.primaryColor,
               ),
               SizedBox(
@@ -151,6 +153,7 @@ class AuthPageState extends State<AuthPage>
                   color: clr.primaryColor,
                   size: 20.sp,
                 ),
+                textColor: Colors.black,
                 cursorColor: clr.primaryColor,
               ),
               SizedBox(
@@ -166,6 +169,7 @@ class AuthPageState extends State<AuthPage>
                   color: clr.primaryColor,
                   size: 20.sp,
                 ),
+                textColor: Colors.black,
                 cursorColor: clr.primaryColor,
               ),
               SizedBox(
@@ -175,12 +179,13 @@ class AuthPageState extends State<AuthPage>
                 controller: registerPasswordConfirmController,
                 keyboardType: TextInputType.visiblePassword,
                 obSecured: true,
-                hintText: "Password",
+                hintText: "Confirm password",
                 prefixIcon: Icon(
                   Icons.lock,
                   color: clr.primaryColor,
                   size: 20.sp,
                 ),
+                textColor: Colors.black,
                 cursorColor: clr.primaryColor,
               ),
               SizedBox(
@@ -238,7 +243,7 @@ class AuthPageState extends State<AuthPage>
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Log In',
+              'Login',
               style: const TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -253,6 +258,7 @@ class AuthPageState extends State<AuthPage>
               textInputAction: TextInputAction.next,
               obSecured: false,
               hintText: "Email",
+              textColor: Colors.black,
               prefixIcon: Icon(
                 Icons.email,
                 color: clr.primaryColor,
@@ -268,6 +274,7 @@ class AuthPageState extends State<AuthPage>
               keyboardType: TextInputType.visiblePassword,
               obSecured: true,
               hintText: "Password",
+              textColor: Colors.black,
               prefixIcon: Icon(
                 Icons.lock,
                 color: clr.primaryColor,
@@ -281,7 +288,6 @@ class AuthPageState extends State<AuthPage>
             BlocConsumer<LoginCubit, LoginState>(
               listener: (context, state) {
                 if (state is LoginSuccessState) {
-
                   getUserCubit.getUserName(EndPoint.userToken);
                   Navigator.pushReplacement(
                       context,
@@ -301,7 +307,7 @@ class AuthPageState extends State<AuthPage>
                           loginCubit.login(loginEmailController.text,
                               loginPasswordController.text);
                         },
-                        text: 'Log In',
+                        text: 'Login',
                         clr: clr.lightBlue,
                         Height: 7.h,
                         width: double.infinity);
@@ -358,7 +364,7 @@ class AuthPageState extends State<AuthPage>
                   },
                   child: Center(
                     child: Text(
-                      'Log In',
+                      'Login',
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,

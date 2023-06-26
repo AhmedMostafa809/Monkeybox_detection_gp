@@ -11,7 +11,7 @@ class GetUserCubit extends Cubit<GetUserState> {
   GetUserCubit() : super(GetUserInitial());
   static GetUserCubit get(context) => BlocProvider.of(context);
   GetUserModel getUserModel = GetUserModel();
-  String name = EndPoint.name;
+  // String name = EndPoint.name;
 
   getUserName(String Token) {
     DioHelper.getData(endPoint: EndPoint.getUserName, token: EndPoint.userToken)

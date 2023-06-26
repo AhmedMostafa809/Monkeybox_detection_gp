@@ -70,8 +70,30 @@ class RegisterCubit extends Cubit<RegisterState> {
               backgroundColor: clr.primaryColor,
               textColor: Colors.white,
               fontSize: 16.0);
-        } else if (EndPoint.error.toString() ==
+        }else if (EndPoint.error.toString() ==
+            '{"email":["The email field must be a valid email address."]}') {
+          Fluttertoast.showToast(
+              msg: "Please check email format",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: clr.primaryColor,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+
+        else if (EndPoint.error.toString() ==
             '{"password":["The password field is required."]}') {
+          Fluttertoast.showToast(
+              msg: "Password must be more than 8 characters",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: clr.primaryColor,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }  else if (EndPoint.error.toString() ==
+            '{"password":["The password field must be at least 8 characters."]}') {
           Fluttertoast.showToast(
               msg: "Password must be more than 8 characters",
               toastLength: Toast.LENGTH_SHORT,

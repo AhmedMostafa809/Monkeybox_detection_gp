@@ -44,9 +44,9 @@ class _detectionScreenState extends State<detectionScreen> {
       'status': status,
     });
     DioHelper.postImage(
-        endPoint: EndPoint.addImage,
-        data: upload,
-        token: EndPoint.userToken)
+            endPoint: EndPoint.addImage,
+            data: upload,
+            token: EndPoint.userToken)
         .then((value) {
       addImageModel = AddImageModel.fromJson(value.data);
       print("Image added :" + addImageModel.imagePath.toString());
@@ -68,10 +68,8 @@ class _detectionScreenState extends State<detectionScreen> {
           backgroundColor: clr.primaryColor,
           textColor: Colors.white,
           fontSize: 16.0);
-
     });
   }
-
 
   classifyImage(File image) async {
     var output = await Tflite.runModelOnImage(
@@ -117,7 +115,7 @@ class _detectionScreenState extends State<detectionScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Upload your photo",
+              Text(_loading == true?"Upload your photo":"",
                   style:
                       TextStyle(fontWeight: FontWeight.bold, fontSize: 25.sp)),
               SizedBox(
@@ -127,7 +125,7 @@ class _detectionScreenState extends State<detectionScreen> {
                   alignment: Alignment.center,
                   padding: const EdgeInsets.all(30),
                   decoration: BoxDecoration(
-                    color: clr.backGround,
+                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: Column(

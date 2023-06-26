@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:monkeybox_final/Cubit/auth_cubit/login_cubit/login_cubit.dart';
 import 'package:monkeybox_final/Cubit/auth_cubit/register_cubit/register_cubit.dart';
 import 'package:monkeybox_final/Cubit/get_user_cubit/get_user_cubit.dart';
+import 'package:monkeybox_final/Cubit/histiry_cubit/history_cubit.dart';
 import 'package:monkeybox_final/Cubit/logout_cubit/logout_cubit.dart';
 import 'package:monkeybox_final/Cubit/theme_cubit/theme_cubit.dart';
 import 'package:monkeybox_final/view/auth/Login&SignUp.dart';
+import 'package:monkeybox_final/view/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'Bloc_opserver.dart';
@@ -17,16 +20,21 @@ void main() async {
   Bloc.observer = MyBlocObserver();
   DioHelper.init();
   await initSharedPrefs();
-  runApp(MultiBlocProvider(
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((value) => runApp(MultiBlocProvider(
     providers: [
       BlocProvider(create: (_) => ThemeCubit()),
       BlocProvider(create: (_) => RegisterCubit()),
       BlocProvider(create: (_) => LoginCubit()),
       BlocProvider(create: (_) => GetUserCubit()),
       BlocProvider(create: (_) => LogoutCubit()),
+      BlocProvider(create: (_) => HistoryCubit()),
     ],
     child: MyApp(),
-  ));
+  )));
 }
 Future<void> initSharedPrefs() async {
   final prefs = await SharedPreferences.getInstance();

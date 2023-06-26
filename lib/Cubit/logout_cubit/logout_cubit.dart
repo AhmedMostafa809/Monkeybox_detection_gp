@@ -14,12 +14,15 @@ class LogoutCubit extends Cubit<LogoutState> {
   LogOutModel logOutModel = LogOutModel();
 
   logOut(String token) {
+    emit(LogoutLoadingState());
     DioHelper.postData(
         endPoint: EndPoint.logOut,
         token: EndPoint.userToken,
         data: {'token': token}).then((value) {
       logOutModel = LogOutModel.fromJson(value.data);
       emit(LogoutSuccessState());
+      print("eta3 bara");
+
     });
   }
 }
